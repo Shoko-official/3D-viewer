@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visualiseur 3D - Modèles GLB</title>
+  <!-- Police Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <!-- Favicon pour éviter l'erreur 404 -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
+  
+  <!-- Configuration des modules ES6 -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.150.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.150.0/examples/jsm/"
+      }
+    }
+  </script>
+  
+  <!-- Charger notre script comme module -->
+  <script type="module" src="script.js"></script>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loadingContainer" class="loading-container">
+    <div class="loading-content">
+      <div class="loading-spinner">
+        <div class="spinner-inner"></div>
+      </div>
+      <h2 class="loading-title">Chargement du modèle 3D</h2>
+      <div class="loading-subtext" id="loadingSubtext">Veuillez patienter</div>
+      <div class="progress-bar">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+      <button id="retryButton" class="btn-retry">
+        <i data-lucide="rotate-ccw"></i> Réessayer
+      </button>
+    </div>
+  </div>
+  
+  <!-- Overlay UI -->
+  <div class="ui-overlay">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-container">
+        <h1 class="header-title">Visualiseur 3D</h1>
+      </div>
+      <div class="header-actions">
+        <button id="toggleHelp" class="btn-icon" title="Aide">
+          <i data-lucide="help-circle"></i>
+        </button>
+        <button id="screenshot" class="btn-icon" title="Capture d'écran">
+          <i data-lucide="camera"></i>
+        </button>
+        <button id="toggleControls" class="btn-icon" title="Paramètres">
+          <i data-lucide="settings"></i>
+        </button>
+        <button id="toggleModels" class="btn-icon" title="Modèles">
+          <i data-lucide="box"></i>
+        </button>
+      </div>
+    </header>
+    
+    <!-- Modèles disponibles -->
+    <div id="modelsPanel" class="models-panel">
+      <div class="panel-header">
+        <h2 class="panel-title">Modèles disponibles</h2>
+        <button id="closeModels" class="btn-icon">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="panel-content">
+        <!-- Select personnalisé -->
+        <div class="custom-select" id="modelSelect">
+          <div class="select-trigger">
+            <span class="selected-value">halloween.glb</span>
+            <i data-lucide="chevron-down" class="select-icon"></i>
+          </div>
+          <div class="select-options">
+            <div class="select-option selected" data-value="halloween.glb">halloween.glb</div>
+            <div class="select-option" data-value="blue_archivekasumizawa_miyu.glb">blue_archivekasumizawa_miyu.glb</div>
+            <div class="select-option" data-value="cloud_station.glb">cloud_station.glb</div>
+            <div class="select-option" data-value="cozy_day.glb">cozy_day.glb</div>
+            <div class="select-option" data-value="fnaf_1_freddy_fazbear_rigged.glb">fnaf_1_freddy_fazbear_rigged.glb</div>
+            <div class="select-option" data-value="forest_house.glb">forest_house.glb</div>
+            <div class="select-option" data-value="ghost_in_the_shell.glb">ghost_in_the_shell.glb</div>
+            <div class="select-option" data-value="misono_mika.glb">misono_mika.glb</div>
+            <div class="select-option" data-value="silent_ash.glb">silent_ash.glb</div>
+            <div class="select-option" data-value="stylized_ww1_plane.glb">stylized_ww1_plane.glb</div>
+          </div>
+        </div>
+        <div class="model-grid">
+          <div class="model-item active" data-model="halloween.glb">
+            <div class="model-thumbnail">
+              <div class="model-icon">🎃</div>
+            </div>
+            <div class="model-name">Halloween</div>
+          </div>
+          <div class="model-item" data-model="blue_archivekasumizawa_miyu.glb">
+            <div class="model-thumbnail">
+              <div class="model-icon">👩</div>
+            </div>
+            <div class="model-name">Miyu</div>
+          </div>
+          <div class="model-item" data-model="cloud_station.glb">
+            <div class="model-thumbnail">
+              <div class="model-icon">☁️</div>
+            </div>
+            <div class="model-name">Cloud Station</div>
+          </div>
+          <div class="model-item" data-model="cozy_day.glb">
+            <div class="model-thumbnail">
+              <div class="model-icon">🏠</div>
+            </div>
+            <div class="model-name">Cozy Day</div>
+          </div>
+          <div class="model-item" data-model="fnaf_1_freddy_fazbear_rigged.glb">
+            <div class="model-thumbnail">
+              <div class="model-icon">🐻</div>
+            </div>
+            <div class="model-name">Freddy</div>
+          </div>
+          <div class="model-item" data-model="forest_house.glb">
+            <div class="model-thumbnail">
+              <div class="model-icon">🌲</div>
+            </div>
+            <div class="model-name">Forest House</div>
+          </div>
+          <div class="model-item" data-model="ghost_in_the_shell.glb">
+            <div class="model-thumbnail">
+              <div class="model-icon">👁️</div>
+            </div>
+            <div class="model-name">Ghost in Shell</div>
+          </div>
+          <div class="model-item" data-model="misono_mika.glb">
+            <div class="model-thumbnail">
+              <div class="model-icon">👧</div>
+            </div>
+            <div class="model-name">Misono Mika</div>
+          </div>
+          <div class="model-item" data-model="silent_ash.glb">
+            <div class="model-thumbnail">
+              <div class="model-icon">🏯</div>
+            </div>
+            <div class="model-name">Silent Ash</div>
+          </div>
+          <div class="model-item" data-model="stylized_ww1_plane.glb">
+            <div class="model-thumbnail">
+              <div class="model-icon">✈️</div>
+            </div>
+            <div class="model-name">WW1 Plane</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Panneau de contrôles -->
+    <div id="controlsPanel" class="controls-panel">
+      <div class="panel-header">
+        <h2 class="panel-title">Paramètres</h2>
+        <button id="closeControls" class="btn-icon">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="panel-content">
+        <div class="control-group">
+          <h3 class="control-title">Affichage</h3>
+          <div class="control-item">
+            <label class="checkbox-label">
+              <input type="checkbox" id="autoRotate" class="checkbox-input">
+              <span class="checkbox-custom"></span>
+              Rotation automatique
+            </label>
+          </div>
+          <div class="control-item">
+            <label class="checkbox-label">
+              <input type="checkbox" id="showGrid" class="checkbox-input">
+              <span class="checkbox-custom"></span>
+              Afficher la grille
+            </label>
+          </div>
+          <div class="control-item">
+            <label class="checkbox-label">
+              <input type="checkbox" id="showWireframe" class="checkbox-input">
+              <span class="checkbox-custom"></span>
+              Mode fil de fer
+            </label>
+          </div>
+        </div>
+        
+        <div class="control-group">
+          <h3 class="control-title">Couleur de fond</h3>
+          <div class="color-picker-container">
+            <input type="color" id="bgColor" class="color-picker" value="#0a0a1a">
+            <div class="color-presets">
+              <div class="color-preset" data-color="#0a0a1a" style="background-color: #0a0a1a"></div>
+              <div class="color-preset" data-color="#1a1a2e" style="background-color: #1a1a2e"></div>
+              <div class="color-preset" data-color="#16213e" style="background-color: #16213e"></div>
+              <div class="color-preset" data-color="#0f3460" style="background-color: #0f3460"></div>
+              <div class="color-preset" data-color="#533483" style="background-color: #533483"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="control-group">
+          <h3 class="control-title">Actions</h3>
+          <div class="control-buttons">
+            <button id="resetAll" class="btn-secondary">
+              <i data-lucide="refresh-cw"></i> Réinitialiser tout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal d'aide -->
+    <div id="helpModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Aide - Contrôles</h2>
+          <button id="closeHelp" class="btn-icon">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="help-section">
+            <h3 class="help-section-title">Souris</h3>
+            <ul class="help-list">
+              <li class="help-item">
+                <div class="help-key">
+                  <i data-lucide="mouse-pointer"></i>
+                </div>
+                <div class="help-text">Clic gauche + glisser : Faire pivoter la vue</div>
+              </li>
+              <li class="help-item">
+                <div class="help-key">
+                  <i data-lucide="mouse-pointer"></i>
+                </div>
+                <div class="help-text">Molette : Zoomer avant/arrière</div>
+              </li>
+              <li class="help-item">
+                <div class="help-key">
+                  <i data-lucide="mouse-pointer"></i>
+                </div>
+                <div class="help-text">Clic droit + glisser : Monter/descendre la vue</div>
+              </li>
+              <li class="help-item">
+                <div class="help-key">
+                  <i data-lucide="mouse-pointer"></i>
+                </div>
+                <div class="help-text">Clic central + glisser : Déplacer latéralement</div>
+              </li>
+            </ul>
+          </div>
+          
+          <div class="help-section">
+            <h3 class="help-section-title">Clavier (ZQSD)</h3>
+            <ul class="help-list">
+              <li class="help-item">
+                <div class="help-key">Z</div>
+                <div class="help-text">Monter</div>
+              </li>
+              <li class="help-item">
+                <div class="help-key">Q</div>
+                <div class="help-text">Gauche</div>
+              </li>
+              <li class="help-item">
+                <div class="help-key">S</div>
+                <div class="help-text">Descendre</div>
+              </li>
+              <li class="help-item">
+                <div class="help-key">D</div>
+                <div class="help-text">Droite</div>
+              </li>
+            </ul>
+          </div>
+          
+          <div class="keyboard-indicator">
+            <div class="key-container">
+              <div class="key-row">
+                <div class="key-empty"></div>
+                <div id="keyForward" class="key-key">Z</div>
+                <div class="key-empty"></div>
+              </div>
+              <div class="key-row">
+                <div id="keyLeft" class="key-key">Q</div>
+                <div id="keyBackward" class="key-key">S</div>
+                <div id="keyRight" class="key-key">D</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Prévisualisation de capture d'écran -->
+    <div id="screenshotPreview" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Capture d'écran</h2>
+          <button id="closePreview" class="btn-icon">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="screenshot-preview-container">
+            <img id="previewImage" class="preview-image" src="" alt="Capture d'écran">
+            <div class="preview-info">
+              <div class="preview-info-item">
+                <span class="preview-label">Dimensions:</span>
+                <span id="previewDimensions" class="preview-value">-</span>
+              </div>
+              <div class="preview-info-item">
+                <span class="preview-label">Taille:</span>
+                <span id="previewSize" class="preview-value">-</span>
+              </div>
+            </div>
+          </div>
+          <div class="screenshot-options">
+            <div class="screenshot-option">
+              <label class="select-label">Format</label>
+              <!-- Select personnalisé pour le format -->
+              <div class="custom-select" id="screenshotFormat">
+                <div class="select-trigger">
+                  <span class="selected-value">PNG</span>
+                  <i data-lucide="chevron-down" class="select-icon"></i>
+                </div>
+                <div class="select-options">
+                  <div class="select-option selected" data-value="png">PNG</div>
+                  <div class="select-option" data-value="jpeg">JPEG</div>
+                  <div class="select-option" data-value="webp">WebP</div>
+                </div>
+              </div>
+            </div>
+            <div class="screenshot-option">
+              <label class="select-label">Qualité</label>
+              <input type="range" id="screenshotQuality" class="range-input" min="0.1" max="1" step="0.1" value="0.9">
+              <span id="qualityValue" class="range-value">90%</span>
+            </div>
+            <div class="screenshot-option">
+              <label class="checkbox-label">
+                <input type="checkbox" id="screenshotUI" class="checkbox-input">
+                <span class="checkbox-custom"></span>
+                Inclure l'interface
+              </label>
+            </div>
+            <div class="screenshot-option">
+              <label class="checkbox-label">
+                <input type="checkbox" id="screenshotTransparent" class="checkbox-input">
+                <span class="checkbox-custom"></span>
+                Fond transparent
+              </label>
+            </div>
+          </div>
+          <div class="screenshot-actions">
+            <button id="downloadScreenshot" class="btn-primary">
+              <i data-lucide="download"></i> Télécharger
+            </button>
+            <button id="shareScreenshot" class="btn-secondary">
+              <i data-lucide="share-2"></i> Partager
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Notification -->
+    <div id="notification" class="notification">
+      <div class="notification-content">
+        <div class="notification-icon">
+          <i data-lucide="check-circle"></i>
+        </div>
+        <div class="notification-message">Message de notification</div>
+      </div>
+    </div>
+    
+    <!-- Informations de débogage -->
+    <div class="debug-info">
+      <div class="debug-item">
+        <span class="debug-label">Modèle:</span>
+        <span id="debugModel" class="debug-value">halloween.glb</span>
+      </div>
+      <div class="debug-item">
+        <span class="debug-label">Position:</span>
+        <span id="debugPosition" class="debug-value">0, 0, 0</span>
+      </div>
+      <div class="debug-item">
+        <span class="debug-label">FPS:</span>
+        <span id="debugFPS" class="debug-value">60</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Canvas Three.js -->
+  <canvas id="canvas3d"></canvas>
+</body>
+</html>
