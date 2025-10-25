@@ -1,12 +1,4 @@
-
-
-Voici une version améliorée du README pour votre projet de visualiseur 3D :
-
 # Visualiseur 3D - Modèles GLB
-
-Un visualiseur 3D moderne et interactif pour afficher des modèles GLB avec des contrôles avancés et une interface utilisateur élégante.
-
-![Capture d'écran](https://via.placeholder.com/800x450?text=Visualiseur+3D+Screenshot)
 
 ## 🚀 Démarrage Rapide
 
@@ -45,14 +37,14 @@ Un visualiseur 3D moderne et interactif pour afficher des modèles GLB avec des 
   - Clic central + glisser : Déplacer latéralement
 
 - **Clavier (ZQSD)** :
-  - Z : Avancer
+  - Z : Monter
   - Q : Gauche
-  - S : Reculer
+  - S : Descendre
   - D : Droite
 
 ### 📸 Capture d'Écran Professionnelle
-- **Qualité réglable** : Standard, Haute qualité (2x), Ultra HD (4x)
-- **Formats multiples** : PNG, JPG, WebP
+- **Qualité réglable** : De 0.1 à 1.0 (10% à 100%)
+- **Formats multiples** : PNG, JPEG, WebP
 - **Options d'apparence** :
   - Inclure ou exclure l'interface
   - Fond transparent optionnel
@@ -72,6 +64,7 @@ Un visualiseur 3D moderne et interactif pour afficher des modèles GLB avec des 
 - Indicateurs visuels des touches actives
 - Informations de débogage en temps réel (FPS, position)
 - Notifications non-intrusives
+- Sélecteurs personnalisés pour une expérience utilisateur cohérente
 
 ## 🛠 Technologies Utilisées
 
@@ -86,28 +79,48 @@ Un visualiseur 3D moderne et interactif pour afficher des modèles GLB avec des 
 
 ```
 ├── glb/                    # Dossier pour les modèles 3D
-│   ├── modele1.glb
-│   ├── modele2.glb
+│   ├── halloween.glb
+│   ├── blue_archivekasumizawa_miyu.glb
+│   ├── cloud_station.glb
+│   ├── cozy_day.glb
+│   ├── fnaf_1_freddy_fazbear_rigged.glb
+│   ├── forest_house.glb
+│   ├── ghost_in_the_shell.glb
+│   ├── misono_mika.glb
+│   ├── silent_ash.glb
+│   ├── stylized_ww1_plane.glb
 │   └── ...
-├── 3d.html                 # Fichier HTML principal
+├── index.html              # Fichier HTML principal
 ├── script.js               # Logique JavaScript
 ├── style.css               # Feuille de style CSS
-└── README.md               # Ce fichier
+├── README.md               # Ce fichier
+├── LICENSE.txt             # Fichier de licence
+└── .gitignore              # Fichier d'ignore Git
 ```
 
 ## Ajouter de Nouveaux Modèles
 
 ### Méthode 1 : Fichiers Locaux
 1. Placez votre fichier GLB dans le dossier `glb/`
-2. Ajoutez une entrée dans la liste des modèles dans `3d.html` :
+2. Ajoutez une entrée dans la liste des modèles dans `index.html` :
    ```html
    <div class="model-item" data-model="votre_modele.glb">
-     <div class="model-icon">
-       <i data-lucide="box"></i>
+     <div class="model-thumbnail">
+       <div class="model-icon">🎮</div>
      </div>
-     <div class="model-info">
-       <div class="model-name">Nom du Modèle</div>
-       <div class="model-size">Taille du fichier</div>
+     <div class="model-name">Nom du Modèle</div>
+   </div>
+   ```
+3. Ajoutez également une option dans le sélecteur personnalisé :
+   ```html
+   <div class="custom-select" id="modelSelect">
+     <div class="select-trigger">
+       <span class="selected-value">halloween.glb</span>
+       <i data-lucide="chevron-down" class="select-icon"></i>
+     </div>
+     <div class="select-options">
+       <!-- Options existantes -->
+       <div class="select-option" data-value="votre_modele.glb">votre_modele.glb</div>
      </div>
    </div>
    ```
@@ -125,18 +138,21 @@ Vous pouvez également utiliser des modèles hébergés en ligne en utilisant un
 La fonctionnalité de capture d'écran offre des options professionnelles :
 
 1. **Qualité** :
-   - Standard : Résolution native de votre écran
-   - Haute qualité : 2x la résolution native
-   - Ultra HD : 4x la résolution native (idéal pour l'impression)
+   - Réglable de 10% à 100% via un curseur
+   - Permet d'équilibrer entre qualité et taille du fichier
 
 2. **Format** :
    - PNG : Sans perte de qualité, support de la transparence
-   - JPG : Compression avec perte, fichiers plus petits
+   - JPEG : Compression avec perte, fichiers plus petits
    - WebP : Format moderne, meilleure compression
 
 3. **Options** :
    - Inclure l'interface : Capture avec ou sans l'UI
    - Fond transparent : Supprime l'arrière-plan pour un fond transparent
+
+4. **Prévisualisation** :
+   - Affiche les dimensions et la taille estimée du fichier
+   - Permet de télécharger ou partager directement
 
 ## Dépannage
 
@@ -155,9 +171,14 @@ La fonctionnalité de capture d'écran offre des options professionnelles :
 - Fermez d'autres onglets ou applications gourmandes en ressources
 - Essayez de réduire la qualité des captures d'écran
 
+**Question : Le sélecteur de format ne s'ouvre pas**
+- Cliquez sur le sélecteur pour ouvrir le menu déroulant
+- Si le problème persiste, rafraîchissez la page
+
 ### Erreurs Connues
 - Erreur "Request for font blocked" : C'est une erreur mineure liée aux polices, elle n'affecte pas le fonctionnement de l'application
 - Erreur "Jeu de règles ignoré" : Erreur CSS mineure qui n'impacte pas l'expérience utilisateur
+- Problème avec les sélecteurs personnalisés : Résolu en utilisant des composants entièrement personnalisés
 
 ## Contribuer
 
@@ -168,4 +189,4 @@ Les contributions sont les bienvenues ! N'hésitez pas à :
 
 ## Licence
 
-Ce projet est sous licence MIT - voir le fichier LICENSE pour plus de détails.
+Ce projet est sous licence MIT - voir le fichier LICENSE.txt pour plus de détails.
